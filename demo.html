@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div class="box">
+  	<div class="way1"></div>
+  	<div class="way2"></div>
+  	<div class="way3"></div>
+  	<div class="way4"></div>
+	<!-- <div class="wrapper">
+		<div class="top">
+			<img src="images/j001.jpg" width="" alt="">
+		</div>
+		<div class="middle">
+			<p><a href="#">#你们的幸福#</a>我就是想给你们拍下有故事感的婚纱照</p>
+		</div>
+		<div class="icon">
+				<span>1414</span>
+				<span>7</span>
+				<span>10</span>
+				
+		</div>
+		
+		<div class="bottom">
+			<div>
+				<img src="images/j001.jpg"  alt="">
+				<p><a href="#">摄影师小臭臭</a>长传到专辑<a href="#">俄罗斯系列 </a>&nbsp 2015-03-14</p>
+			</div>
+		</div>
+	</div>	 -->
+	
+	
+	
+
+</div>
+
+<script src="js/jquery-3.2.1.js"></script>
+<script>
+	function ajax(method ,url ,callback ,data ,flag ){
+		var xhr = null;
+		if(window.XMLHttpRequest){
+			xhr = new XMLHttpRequest();
+		}else{
+			xhr = new ActiveXObject("Microsoft.XMLHttp");
+		}
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState == 4 ){
+				if(xhr.status == 200){
+					callback(xhr.responseText);
+				}
+			}
+		}
+		method = method.toUpperCase();
+		if(method == 'GET'){
+			var data = new Date(),
+			timer = data.getTime();
+			xhr.open(method,url + '?'+data+'&timer='+timer ,flag);
+			xhr.send();
+		}else if(method == 'POST'){
+			xhr.open(method ,url ,flag);
+			xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			xhr.send(data);
+		}
+	}
+	function getPics(data){
+		// console.log(data);
+		var json = JSON.parse(data);
+		makediv(json);
+		console.log(json);
+		
+	}
+	ajax('GET','../../05-ajax/DAY-1/getPics.php',getPics,'',true);
+var flag =true;
+var way1H=0;
+var way2H=1;
+var way3H=2;
+var way4H=3;
+
+function makediv(data){
+
+	// console.log(data);
+	var len =data.length;
+	var str1='';
+	var str2='';
+	var str3='';
+	var str4='';
+	for (var i = 0; i<50 ;i++) {
+		var hg = parseInt( data[i].height *205/data[i].width);
+		var saveStr ='	<div class="wrapper">\
+			<div class="top">\
+				<img src='+data[i].preview+' height="'+hg+'px" alt="">\
+			</div>\
+			<div class="middle">\
+				<p><a href="#">#你们的幸福#</a>我就是想给你们拍下有故事感的婚纱照</p>\
+			</div>\
+			<div class="icon">\
+					<span>1414</span>\
+					<span>7</span>\
+					<span>10</span>\
+			</div>\
+			<div class="bottom">\
+				<div>\
+					<img src='+data[i].preview+'  alt="">\
+					<p><a href="#">'+data[i].id+'</a>长传到专辑<a href="#">俄罗斯系列 </a>&nbsp 2015-03-14</p>\
+				</div>\
+			</div>\
+		</div>'
+		if(way1H <= way2H && way1H <= way3H && way1H <= way4H){
+			str1 += saveStr;
+			way1H += hg;
+		}
+		else if(way2H <= way1H && way2H <= way3H && way2H <= way4H){
+			str2 += saveStr ;
+			way2H += hg;
+
+		}
+		else if(way3H <= way1H && way3H <= way2H && way3H <= way4H){
+			str3 += saveStr ;
+			way3H += hg;
+
+		}else if(way4H <= way1H && way4H <= way3H && way4H <= way1H){
+			str4 += saveStr ;
+			way4H += hg;
+
+		}
+	};
+	
+	$('.way1').append(str1);
+	$('.way2').append(str2);
+	$('.way3').append(str3);
+	$('.way4').append(str4);
+	flag =true;
+	console.log(flag);
+}
+
+
+$(document).ready(function(){
+	$(document).scroll(function(){
+	if ($('.box').height()-$(document).scrollTop() <=3000){
+		if(flag){
+			flag=false;
+			ajax('GET','../../05-ajax/DAY-1/getPics.php',getPics,'',true);
+			}
+		}
+	})
+})
+
+
+</script>
+
+
+</body>
+</html>
